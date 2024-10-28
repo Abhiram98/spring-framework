@@ -76,6 +76,10 @@ public class BeanFactoryJCacheOperationSourceAdvisor extends AbstractBeanFactory
 
 		@Override
 		public boolean matches(Method method, Class<?> targetClass) {
+			return hasCacheOperation(method, targetClass);
+		}
+
+		private boolean hasCacheOperation(Method method, Class<?> targetClass) {
 			return (this.cacheOperationSource == null ||
 					this.cacheOperationSource.getCacheOperation(method, targetClass) != null);
 		}

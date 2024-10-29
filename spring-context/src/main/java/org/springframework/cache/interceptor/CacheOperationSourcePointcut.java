@@ -53,12 +53,12 @@ class CacheOperationSourcePointcut extends StaticMethodMatcherPointcut implement
 
 	@Override
 	public boolean matches(Method method, Class<?> targetClass) {
-		return hasCacheOperations(method, targetClass);
+		return (this.cacheOperationSource == null ||
+				hasCacheOperations(method, targetClass));
 	}
 
 	private boolean hasCacheOperations(Method method, Class<?> targetClass) {
-		return (this.cacheOperationSource == null ||
-				!CollectionUtils.isEmpty(this.cacheOperationSource.getCacheOperations(method, targetClass)));
+		return !CollectionUtils.isEmpty(this.cacheOperationSource.getCacheOperations(method, targetClass));
 	}
 
 	@Override

@@ -281,6 +281,11 @@ public abstract class SpelNodeImpl implements SpelNode, Opcodes {
 		Assert.state(lastDesc != null, "No last descriptor");
 		boolean primitiveOnStack = CodeFlow.isPrimitive(lastDesc);
 		// Check if need to box it for the method reference?
+		generateCodeForArgument(mv, paramDesc, primitiveOnStack, lastDesc);
+		cf.exitCompilationScope();
+	}
+
+	private static void generateCodeForArgument(MethodVisitor mv, String paramDesc, boolean primitiveOnStack, String lastDesc) {
 		if (primitiveOnStack && paramDesc.charAt(0) == 'L') {
 			CodeFlow.insertBoxIfNecessary(mv, lastDesc.charAt(0));
 		}
@@ -291,7 +296,6 @@ public abstract class SpelNodeImpl implements SpelNode, Opcodes {
 			// This would be unnecessary in the case of subtyping (e.g. method takes Number but Integer passed in)
 			CodeFlow.insertCheckCast(mv, paramDesc);
 		}
-		cf.exitCompilationScope();
 	}
 
 }

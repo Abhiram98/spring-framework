@@ -52,12 +52,12 @@ final class TransactionAttributeSourcePointcut extends StaticMethodMatcherPointc
 
 	@Override
 	public boolean matches(Method method, Class<?> targetClass) {
-		return hasTransactionAttribute(method, targetClass);
+		return (this.transactionAttributeSource == null ||
+				hasTransactionAttribute(method, targetClass));
 	}
 
 	private boolean hasTransactionAttribute(Method method, Class<?> targetClass) {
-		return (this.transactionAttributeSource == null ||
-				this.transactionAttributeSource.getTransactionAttribute(method, targetClass) != null);
+		return this.transactionAttributeSource.getTransactionAttribute(method, targetClass) != null;
 	}
 
 	@Override

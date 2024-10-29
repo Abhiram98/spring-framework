@@ -102,6 +102,17 @@ public class RequestMappingHandlerAdapter
 	private ModelInitializer modelInitializer;
 
 
+	@Nullable
+	public Scheduler getScheduler() {
+		return scheduler;
+	}
+
+	@Nullable
+	public Predicate<HandlerMethod> getBlockingMethodPredicate() {
+		return blockingMethodPredicate;
+	}
+
+
 	/**
 	 * Configure HTTP message readers to de-serialize the request body with.
 	 * <p>By default this is set to {@link ServerCodecConfigurer}'s readers with defaults.
@@ -267,10 +278,10 @@ public class RequestMappingHandlerAdapter
 	}
 
 	private @NotNull Mono<HandlerResult> getSchedulerFor(HandlerMethod handlerMethod, Mono<HandlerResult> resultMono) {
-		if (this.scheduler != null) {
-			Assert.state(this.blockingMethodPredicate != null, "Expected HandlerMethod Predicate");
-			if (this.blockingMethodPredicate.test(handlerMethod)) {
-				resultMono = resultMono.subscribeOn(this.scheduler);
+		if (this.getScheduler() != null) {
+			Assert.state(this.getBlockingMethodPredicate() != null, "Expected HandlerMethod Predicate");
+			if (this.getBlockingMethodPredicate().test(handlerMethod)) {
+				resultMono = resultMono.subscribeOn(this.getScheduler());
 			}
 		}
 		return resultMono;

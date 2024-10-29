@@ -24,6 +24,7 @@ import java.util.function.Predicate;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jetbrains.annotations.NotNull;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Scheduler;
 import reactor.core.scheduler.Schedulers;
@@ -260,13 +261,18 @@ public class RequestMappingHandlerAdapter
 				.doOnNext(result -> result.setExceptionHandler(exceptionHandler))
 				.onErrorResume(ex -> exceptionHandler.handleError(exchange, ex));
 
+		resultMono = getSchedulerFor(handlerMethod, resultMono);
+
+		return resultMono;
+	}
+
+	private @NotNull Mono<HandlerResult> getSchedulerFor(HandlerMethod handlerMethod, Mono<HandlerResult> resultMono) {
 		if (this.scheduler != null) {
 			Assert.state(this.blockingMethodPredicate != null, "Expected HandlerMethod Predicate");
 			if (this.blockingMethodPredicate.test(handlerMethod)) {
 				resultMono = resultMono.subscribeOn(this.scheduler);
 			}
 		}
-
 		return resultMono;
 	}
 
